@@ -26,6 +26,228 @@ YouTube動画を使用した、Udemy風の動画講座プラットフォームMV
 | バックエンド/DB | Supabase（認証 + PostgreSQL） |
 | デプロイ | Vercel |
 
+## コーディング規約・ベストプラクティス
+
+### React.js
+
+#### コンポーネント設計
+- **関数コンポーネント + Hooks** を使用（クラスコンポーネントは使用しない）
+- **単一責任の原則**: 1コンポーネント = 1つの責務
+- コンポーネントは **150行以内** を目安に分割
+- **Props の型定義** は必須（interface で定義）
+
+```tsx
+// Good
+interface VideoCardProps {
+  video: Video;
+  onLike: (id: string) => void;
+}
+
+export const VideoCard = ({ video, onLike }: VideoCardProps) => {
+  // ...
+};
+```
+
+#### 状態管理
+- **ローカル状態**: `useState` を使用
+- **グローバル状態（認証など）**: React Context + `useReducer` を使用
+- **サーバー状態**: カスタムフックで管理（`useVideos`, `useComments` など）
+- 状態は **必要最小限** に保つ（派生データは計算で求める）
+
+#### カスタムフック
+- ロジックの再利用には **カスタムフック** を作成
+- 命名規則: `use` プレフィックス（例: `useAuth`, `useVideoLike`）
+- フックは `src/hooks/` に配置
+
+```tsx
+// Good: カスタムフックでロジックを分離
+export const useVideoLike = (videoId: string) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
+  const toggleLike = async () => {
+    // いいね処理
+  };
+
+  return { isLiked, likeCount, toggleLike };
+};
+```
+
+#### パフォーマンス最適化
+- `useMemo`: 計算コストの高い値のメモ化
+- `useCallback`: 子コンポーネントに渡すコールバック関数のメモ化
+- `React.memo`: 再レンダリングを防ぎたいコンポーネントに使用
+- **過度な最適化は避ける**（まず計測してから最適化）
+
+#### その他のルール
+- **key prop** にはユニークで安定した値を使用（index は避ける）
+- **条件付きレンダリング** は早期リターンまたは三項演算子を使用
+- イベントハンドラは `handle` プレフィックス（例: `handleSubmit`, `handleClick`）
+
+### React Router v6
+
+#### ルーティング設計
+- ルート定義は `App.tsx` で一元管理
+- **ネストされたルート** と `<Outlet />` を活用
+
+```tsx
+// Good: ネストされたルート構造
+<Routes>
+  <Route element={<Layout />}>
+    <Route path="/" element={<Home />} />
+    <Route path="/videos/:id" element={<VideoDetail />} />
+    <Route element={<ProtectedRoute />}>
+      <Route path="/videos/new" element={<VideoNew />} />
+      <Route path="/profile" element={<Profile />} />
+    </Route>
+  </Route>
+</Routes>
+```
+
+#### フック活用
+- **useNavigate**: プログラム的な画面遷移
+- **useParams**: URLパラメータの取得
+- **useLocation**: 現在のロケーション情報
+- **useSearchParams**: クエリパラメータの操作
+
+```tsx
+// Good: フックを使用したナビゲーション
+const navigate = useNavigate();
+const { id } = useParams<{ id: string }>();
+
+const handleEdit = () => {
+  navigate(`/videos/${id}/edit`);
+};
+```
+
+#### 認証ガード
+- **ProtectedRoute コンポーネント** で認証が必要なルートを保護
+- 未認証時はログインページへリダイレクト
+
+```tsx
+// Good: 認証ガードコンポーネント
+export const ProtectedRoute = () => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
+
+  return <Outlet />;
+};
+```
+
+#### リンク
+- 内部リンクは **`<Link>`** コンポーネントを使用（`<a>` タグは使わない）
+- アクティブ状態が必要な場合は **`<NavLink>`** を使用
+
+### Supabase
+
+#### クライアント設定
+- Supabaseクライアントは **シングルトン** として `src/lib/supabase.ts` で作成
+- 環境変数から設定を読み込む
+
+```tsx
+// src/lib/supabase.ts
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/database.types';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+```
+
+#### 型安全性
+- **Supabase CLI** で型を生成: `npx supabase gen types typescript`
+- 生成した型を `src/types/database.types.ts` に配置
+- クエリ結果は適切に型付け
+
+```tsx
+// Good: 型安全なクエリ
+const { data, error } = await supabase
+  .from('videos')
+  .select('*, profiles(username, avatar_url)')
+  .eq('id', videoId)
+  .single();
+```
+
+#### 認証
+- **onAuthStateChange** でセッション変更を監視
+- AuthContext で認証状態をグローバル管理
+- クリーンアップで購読解除を忘れない
+
+```tsx
+// Good: 認証状態の監視
+useEffect(() => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      setUser(session?.user ?? null);
+    }
+  );
+
+  return () => subscription.unsubscribe();
+}, []);
+```
+
+#### データ取得パターン
+- **SELECT**: 必要なカラムのみ指定（`*` は避ける）
+- **リレーション**: 外部キーのテーブルは括弧記法で取得
+- **エラーハンドリング**: 必ず error をチェック
+
+```tsx
+// Good: 必要なデータのみ取得
+const { data, error } = await supabase
+  .from('videos')
+  .select(`
+    id,
+    title,
+    youtube_url,
+    created_at,
+    profiles (
+      username,
+      avatar_url
+    ),
+    likes (count)
+  `)
+  .order('created_at', { ascending: false });
+
+if (error) throw error;
+```
+
+#### リアルタイム購読
+- コンポーネントのアンマウント時に **必ず購読解除**
+- 購読は必要な場合のみ使用
+
+```tsx
+// Good: リアルタイム購読とクリーンアップ
+useEffect(() => {
+  const channel = supabase
+    .channel('comments')
+    .on('postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'comments' },
+      (payload) => {
+        setComments(prev => [...prev, payload.new]);
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
+```
+
+#### RLS（Row Level Security）
+- 全テーブルで **RLS を有効化**
+- クライアントからのアクセスは RLS で制御（サーバーサイドのバリデーションに頼らない）
+- ポリシーはシンプルに保つ
+
+#### ストレージ（アバター画像）
+- バケット名: `avatars`
+- ファイル名: `{user_id}/{timestamp}.{ext}` 形式
+- アップロード前にファイルサイズ・形式をバリデーション
+
 ## ディレクトリ構成
 
 ```
