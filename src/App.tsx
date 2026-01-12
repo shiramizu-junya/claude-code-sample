@@ -5,9 +5,7 @@ function App() {
         <h1 className="text-3xl font-bold text-gray-800">
           Video Course Platform
         </h1>
-        <p className="mt-4 text-gray-600">
-          TailwindCSS is working!
-        </p>
+        <p className="mt-4 text-gray-600">TailwindCSS is working!</p>
       </div>
     </div>
   );
