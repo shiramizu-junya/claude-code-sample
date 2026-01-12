@@ -1,13 +1,30 @@
+import { Routes, Route } from 'react-router-dom';
+import { Layout } from './components/layout/Layout';
+import { Home } from './pages/Home';
+import { VideoDetail } from './pages/VideoDetail';
+import { VideoNew } from './pages/VideoNew';
+import { VideoEdit } from './pages/VideoEdit';
+import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
+import { Profile } from './pages/Profile';
+import { UserDetail } from './pages/UserDetail';
+import { NotFound } from './pages/NotFound';
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Video Course Platform
-        </h1>
-        <p className="mt-4 text-gray-600">TailwindCSS is working!</p>
-      </div>
-    </div>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/videos/:id" element={<VideoDetail />} />
+        <Route path="/videos/new" element={<VideoNew />} />
+        <Route path="/videos/:id/edit" element={<VideoEdit />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/users/:id" element={<UserDetail />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }
 
