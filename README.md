@@ -1,73 +1,101 @@
-# React + TypeScript + Vite
+# Video Course Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+YouTube動画を使用した、Udemy風の動画講座プラットフォームMVP。
+ログインユーザーが動画を投稿し、他のユーザーが視聴・コメント・いいねできるサービスです。
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| カテゴリ        | 技術                          |
+| --------------- | ----------------------------- |
+| フロントエンド  | React 18+ with TypeScript     |
+| ルーティング    | React Router v6               |
+| ビルドツール    | Vite                          |
+| スタイリング    | TailwindCSS                   |
+| コード品質      | ESLint + Prettier             |
+| バックエンド/DB | Supabase（認証 + PostgreSQL） |
+| デプロイ        | Vercel                        |
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 必要な環境
 
-## Expanding the ESLint configuration
+- Node.js 18+
+- npm
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### インストール
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+# 依存関係のインストール
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 環境変数の設定
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+`.env`ファイルをプロジェクトルートに作成し、以下の環境変数を設定してください。
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
+
+### 開発サーバーの起動
+
+```bash
+npm run dev
+```
+
+## Scripts
+
+| コマンド          | 説明                                     |
+| ----------------- | ---------------------------------------- |
+| `npm run dev`     | 開発サーバーを起動（HMR有効）            |
+| `npm run build`   | TypeScriptの型チェック後、本番ビルド     |
+| `npm run lint`    | ESLintを実行                             |
+| `npm run preview` | 本番ビルドをローカルでプレビュー         |
+
+## Features
+
+### 認証機能
+
+- ユーザー登録（メールアドレス + パスワード）
+- ログイン / ログアウト
+- プロフィール編集（アイコン画像、自己紹介文）
+
+### 動画機能
+
+- 動画投稿（YouTube URL、タイトル、説明文）
+- 動画一覧表示（カード形式）
+- 動画詳細表示（YouTube埋め込みプレイヤー）
+- 動画編集・削除（投稿者のみ）
+
+### いいね機能
+
+- 動画へのいいね / いいね解除
+- いいね数の表示
+
+### コメント機能
+
+- コメント投稿
+- コメント返信（スレッド形式）
+- コメント編集・削除（投稿者のみ）
+
+## Directory Structure
+
+```
+src/
+├── components/          # 共通コンポーネント
+│   ├── common/          # ボタン、入力フォームなど
+│   ├── layout/          # ヘッダー、フッターなど
+│   └── video/           # 動画関連コンポーネント
+├── pages/               # ページコンポーネント
+├── hooks/               # カスタムフック
+├── lib/                 # Supabaseクライアントなど
+├── contexts/            # React Context（認証状態など）
+├── utils/               # ユーティリティ関数
+├── App.tsx
+└── main.tsx
+```
+
+## License
+
+Private

@@ -5,5 +5,11 @@
       "Bash(gh issue list:*)",
       "Bash(gh issue view:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "github",
+    "notionApi",
+    "supabase",
+    "playwright"
+  ]
 }
