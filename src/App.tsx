@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { Home } from './pages/Home';
 import { VideoDetail } from './pages/VideoDetail';
 import { VideoNew } from './pages/VideoNew';
@@ -16,12 +17,14 @@ function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/videos/:id" element={<VideoDetail />} />
-        <Route path="/videos/new" element={<VideoNew />} />
-        <Route path="/videos/:id/edit" element={<VideoEdit />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/users/:id" element={<UserDetail />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/videos/new" element={<VideoNew />} />
+          <Route path="/videos/:id/edit" element={<VideoEdit />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
