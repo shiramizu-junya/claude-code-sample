@@ -1,6 +1,15 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 export const Layout = () => {
+  const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
@@ -10,15 +19,39 @@ export const Layout = () => {
               Video Course Platform
             </Link>
             <nav className="flex items-center gap-4">
-              <Link to="/login" className="text-gray-600 hover:text-gray-800">
-                ログイン
-              </Link>
-              <Link
-                to="/signup"
-                className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-              >
-                新規登録
-              </Link>
+              {loading ? (
+                <div className="h-8 w-20 animate-pulse rounded bg-gray-200" />
+              ) : user ? (
+                <>
+                  <Link
+                    to="/profile"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    プロフィール
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="rounded border border-gray-300 px-4 py-2 text-gray-600 hover:bg-gray-50"
+                  >
+                    ログアウト
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    ログイン
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                  >
+                    新規登録
+                  </Link>
+                </>
+              )}
             </nav>
           </div>
         </div>
