@@ -3,7 +3,9 @@
     "allow": [
       "Bash(gh issue create:*)",
       "Bash(gh issue list:*)",
-      "Bash(gh issue view:*)"
+      "Bash(gh issue view:*)",
+      "mcp__github__get_issue",
+      "Bash(npm run lint:*)"
     ]
   },
   "enabledMcpjsonServers": [

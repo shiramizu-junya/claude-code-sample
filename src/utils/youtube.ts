@@ -33,3 +33,20 @@ export const isValidYouTubeUrl = (url: string): boolean => {
 export const getYouTubeEmbedUrl = (videoId: string): string => {
   return `https://www.youtube.com/embed/${videoId}`;
 };
+
+/**
+ * YouTubeサムネイルURLを生成する
+ */
+export const getYouTubeThumbnailUrl = (
+  videoId: string,
+  quality: 'default' | 'medium' | 'high' | 'standard' | 'maxres' = 'medium'
+): string => {
+  const qualityMap = {
+    default: 'default',
+    medium: 'mqdefault',
+    high: 'hqdefault',
+    standard: 'sddefault',
+    maxres: 'maxresdefault',
+  };
+  return `https://img.youtube.com/vi/${videoId}/${qualityMap[quality]}.jpg`;
+};
