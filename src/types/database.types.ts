@@ -36,6 +36,44 @@ export type Database = {
         };
         Relationships: [];
       };
+      videos: {
+        Row: {
+          created_at: string | null;
+          description: string | null;
+          id: string;
+          title: string;
+          updated_at: string | null;
+          user_id: string;
+          youtube_url: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          description?: string | null;
+          id?: string;
+          title: string;
+          updated_at?: string | null;
+          user_id: string;
+          youtube_url: string;
+        };
+        Update: {
+          created_at?: string | null;
+          description?: string | null;
+          id?: string;
+          title?: string;
+          updated_at?: string | null;
+          user_id?: string;
+          youtube_url?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'videos_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
