@@ -3,6 +3,7 @@ import { useVideo } from '../hooks/useVideo';
 import { useAuth } from '../hooks/useAuth';
 import { extractYouTubeVideoId, getYouTubeEmbedUrl } from '../utils/youtube';
 import { LikeButton } from '../components/video/LikeButton';
+import { CommentList } from '../components/comment/CommentList';
 
 export const VideoDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -114,6 +115,10 @@ export const VideoDetail = () => {
             </p>
           </div>
         )}
+
+        <div className="mt-8">
+          <CommentList videoId={video.id} />
+        </div>
       </div>
     </div>
   );

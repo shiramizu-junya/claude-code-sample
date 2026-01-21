@@ -7,7 +7,9 @@
       "mcp__github__get_issue",
       "Bash(npm run lint:*)",
       "mcp__supabase__generate_typescript_types",
-      "mcp__github__update_issue"
+      "mcp__github__update_issue",
+      "mcp__supabase__apply_migration",
+      "Bash(npm run build)"
     ]
   },
   "enabledMcpjsonServers": [
