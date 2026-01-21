@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      likes: {
+        Row: {
+          created_at: string | null;
+          id: string;
+          user_id: string;
+          video_id: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string;
+          user_id: string;
+          video_id: string;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string;
+          user_id?: string;
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'likes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'likes_video_id_fkey';
+            columns: ['video_id'];
+            isOneToOne: false;
+            referencedRelation: 'videos';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
           avatar_url: string | null;

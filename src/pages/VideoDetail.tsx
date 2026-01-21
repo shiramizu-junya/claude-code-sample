@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useVideo } from '../hooks/useVideo';
 import { useAuth } from '../hooks/useAuth';
 import { extractYouTubeVideoId, getYouTubeEmbedUrl } from '../utils/youtube';
+import { LikeButton } from '../components/video/LikeButton';
 
 export const VideoDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -100,6 +101,10 @@ export const VideoDetail = () => {
           </Link>
           <span className="text-gray-500">•</span>
           <span className="text-gray-500">{formatDate(video.created_at)}</span>
+        </div>
+
+        <div className="mt-4">
+          <LikeButton videoId={video.id} />
         </div>
 
         {video.description && (
